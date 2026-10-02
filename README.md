@@ -104,3 +104,14 @@ run creates `data/database/flowbridge.db`, replaces the current `sales` table
 snapshot, and prints the loaded row count and revenue totals. Running it again
 does not append duplicate rows. If loading fails, the transaction is rolled back
 and the previous database records are preserved.
+
+Start the Streamlit sales dashboard:
+
+```powershell
+python -m streamlit run app.py
+```
+
+The dashboard reads `data/processed/clean_sales.xlsx` and shows sales metrics, a
+regional sales chart, and the cleaned records. If the workbook is missing, the
+page tells you to run the generator and cleaner. The dashboard never creates or
+changes the data itself. Press `Ctrl+C` in PowerShell to stop the app.
