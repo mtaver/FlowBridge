@@ -105,6 +105,17 @@ snapshot, and prints the loaded row count and total sales. Running it again
 does not append duplicate rows. If loading fails, the transaction is rolled back
 and the previous database records are preserved.
 
+Refresh the cleaned data and database together:
+
+```powershell
+python refresh_data.py
+```
+
+The refresh command cleans the existing `data/raw/sample_sales.xlsx` file and
+then replaces the sales snapshot in SQLite. It does not generate sample data.
+The Streamlit dashboard still reads `data/processed/clean_sales.xlsx`, so reload
+the dashboard page after a successful refresh to see the updated data.
+
 Start the Streamlit sales dashboard:
 
 ```powershell
