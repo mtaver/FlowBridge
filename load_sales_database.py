@@ -174,7 +174,7 @@ def print_database_summary(database_file: Path = DATABASE_FILE) -> None:
 
     print(f"Database path: {database_file.resolve()}")
     print(f"Loaded row count: {row_count}")
-    print(f"Total revenue: {total_revenue:.2f}")
+    print(f"Total sales: {total_revenue:.2f}")
     print("Revenue by region:")
     for region, revenue in revenue_by_region:
         print(f"  {region}: {revenue:.2f}")

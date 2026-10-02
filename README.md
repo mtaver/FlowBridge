@@ -101,7 +101,7 @@ py load_sales_database.py
 
 The loader validates the clean workbook before opening the database. A successful
 run creates `data/database/flowbridge.db`, replaces the current `sales` table
-snapshot, and prints the loaded row count and revenue totals. Running it again
+snapshot, and prints the loaded row count and total sales. Running it again
 does not append duplicate rows. If loading fails, the transaction is rolled back
 and the previous database records are preserved.
 
