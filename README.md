@@ -167,3 +167,28 @@ The dashboard reads `data/processed/clean_sales.xlsx` and shows sales metrics, a
 regional sales chart, and the cleaned records. If the workbook is missing, the
 page tells you to run the generator and cleaner. The dashboard never creates or
 changes the data itself. Press `Ctrl+C` in PowerShell to stop the app.
+
+## Fetch raw sales from the local demo API
+
+The demo API reads the existing `data/raw/sample_sales.xlsx` workbook and serves
+its 100 raw records as JSON. It listens only on your computer. In one PowerShell
+terminal, start it with:
+
+```powershell
+python demo_api_sales.py
+```
+
+Leave that terminal open. In a second PowerShell terminal in the FlowBridge
+folder, fetch the records:
+
+```powershell
+python fetch_api_sales.py http://127.0.0.1:8000/sales
+```
+
+The fetch command validates the JSON structure and writes
+`data/raw/api_sales.xlsx`. It preserves the original values for a later cleaning
+step. A failed request leaves the previous API workbook unchanged. Press `Ctrl+C`
+in the first terminal to stop the demo API.
+
+API ingestion is not connected to `refresh_data.py` or the scheduled task yet.
+Those commands continue to clean `data/raw/sample_sales.xlsx`.
