@@ -14,6 +14,9 @@ data/processed/*.xlsx
 data/database/*.db
 data/database/*.db-*
 
+# Generated Power BI exports
+data/powerbi/*.csv
+
 # Scheduled refresh logs
 logs/
 

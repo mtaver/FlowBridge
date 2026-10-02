@@ -100,6 +100,10 @@ def main() -> int:
                 "database loading step",
                 [sys.executable, str(PROJECT_DIRECTORY / "load_sales_database.py")],
             ),
+            (
+                "Power BI export step",
+                [sys.executable, str(PROJECT_DIRECTORY / "export_powerbi_data.py")],
+            ),
         ]
     )
 

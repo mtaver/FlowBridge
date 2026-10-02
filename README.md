@@ -105,6 +105,17 @@ snapshot, and prints the loaded row count and total sales. Running it again
 does not append duplicate rows. If loading fails, the transaction is rolled back
 and the previous database records are preserved.
 
+Export the current SQLite sales snapshot for Power BI:
+
+```powershell
+python export_powerbi_data.py
+```
+
+This writes `data/powerbi/sales.csv` in a stable row order. The previous CSV is
+preserved if an export fails. See the beginner-friendly
+[Power BI guide](POWER_BI_GUIDE.md) for import steps, DAX measures, visuals, and
+report refresh instructions.
+
 Refresh the cleaned data and database together:
 
 ```powershell
@@ -133,9 +144,12 @@ python refresh_data.py --source api --url http://127.0.0.1:8000/sales
 
 API mode fetches raw records into `data/raw/api_sales.xlsx`, then uses the same
 cleaner and database loader as Excel mode. Every successful refresh replaces the
-current cleaned files and SQLite sales snapshot; Excel and API sources are not
-combined. The Streamlit dashboard still reads `data/processed/clean_sales.xlsx`,
-so reload the dashboard page after a successful refresh to see updated data.
+current cleaned files, SQLite sales snapshot, and Power BI CSV; Excel and API
+sources are not combined. The export runs only after a successful database load.
+If the export then fails, the database may already contain the new snapshot while
+the prior CSV is preserved. The Streamlit dashboard still reads
+`data/processed/clean_sales.xlsx`, so reload the dashboard page after a
+successful refresh to see updated data.
 
 ## Schedule a daily refresh on Windows
 
