@@ -116,6 +116,47 @@ then replaces the sales snapshot in SQLite. It does not generate sample data.
 The Streamlit dashboard still reads `data/processed/clean_sales.xlsx`, so reload
 the dashboard page after a successful refresh to see the updated data.
 
+## Schedule a daily refresh on Windows
+
+The scheduled task uses the Python executable inside this project's `.venv`, so
+create the virtual environment and install `requirements.txt` before setup. In
+PowerShell, register a daily refresh at 09:00 local time:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\setup_scheduled_refresh.ps1
+```
+
+The task is named `FlowBridge Daily Refresh`. It runs only while your Windows
+user is logged in, does not store a password, skips a new run if an earlier run
+is still active, and runs a missed schedule when Windows makes that available.
+The computer must be on and your user must be logged in for the task to run.
+
+Run the registered task immediately:
+
+```powershell
+Start-ScheduledTask -TaskName "FlowBridge Daily Refresh"
+```
+
+Check its status, last result, and next run time:
+
+```powershell
+Get-ScheduledTask -TaskName "FlowBridge Daily Refresh"
+Get-ScheduledTaskInfo -TaskName "FlowBridge Daily Refresh"
+```
+
+Each run writes timestamped output and error logs under `logs/`. To change the
+daily time, run setup again with a 24-hour `HH:mm` value. For example:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\setup_scheduled_refresh.ps1 -DailyTime "14:30"
+```
+
+Remove only this project's scheduled task:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\remove_scheduled_refresh.ps1
+```
+
 Start the Streamlit sales dashboard:
 
 ```powershell
