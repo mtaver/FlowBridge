@@ -92,3 +92,15 @@ py clean_sales_data.py
 Run the generator before the cleaner whenever you want to recreate the original
 sample. The cleaner can be run repeatedly and will replace only the generated
 files in `data/processed`; it never changes `data/raw/sample_sales.xlsx`.
+
+Load the clean sales data into SQLite:
+
+```powershell
+py load_sales_database.py
+```
+
+The loader validates the clean workbook before opening the database. A successful
+run creates `data/database/flowbridge.db`, replaces the current `sales` table
+snapshot, and prints the loaded row count and revenue totals. Running it again
+does not append duplicate rows. If loading fails, the transaction is rolled back
+and the previous database records are preserved.

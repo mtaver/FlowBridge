@@ -10,6 +10,10 @@ __pycache__/
 data/raw/*.xlsx
 data/processed/*.xlsx
 
+# Generated SQLite databases and temporary files
+data/database/*.db
+data/database/*.db-*
+
 # Secrets and local environment settings
 .env
 .env.*
