@@ -4,6 +4,7 @@ import argparse
 import os
 from pathlib import Path
 import tempfile
+from urllib.parse import urlsplit, urlunsplit
 
 import pandas as pd
 import requests
@@ -21,6 +22,23 @@ REQUIRED_COLUMNS = [
     "quantity",
     "unit_price",
 ]
+
+
+def safe_api_url(api_url: str) -> str:
+    """Return a URL without credentials, query parameters, or fragments."""
+    try:
+        parsed_url = urlsplit(api_url)
+        host = parsed_url.hostname or ""
+        if not parsed_url.scheme or not host:
+            return "(API URL omitted)"
+        if ":" in host and not host.startswith("["):
+            host = f"[{host}]"
+        port = f":{parsed_url.port}" if parsed_url.port is not None else ""
+        return urlunsplit(
+            (parsed_url.scheme, f"{host}{port}", parsed_url.path, "", "")
+        )
+    except ValueError:
+        return "(API URL omitted)"
 
 
 def validate_records(payload: object) -> list[dict]:
@@ -75,6 +93,7 @@ def save_records(records: list[dict], output_file: Path = OUTPUT_FILE) -> None:
 
 def fetch_records(api_url: str) -> list[dict]:
     """Fetch and validate sales records from one API URL."""
+    display_url = safe_api_url(api_url)
     try:
         response = requests.get(api_url, timeout=REQUEST_TIMEOUT_SECONDS)
     except requests.Timeout as error:
@@ -82,9 +101,9 @@ def fetch_records(api_url: str) -> list[dict]:
             f"API request timed out after {REQUEST_TIMEOUT_SECONDS} seconds."
         ) from error
     except requests.ConnectionError as error:
-        raise RuntimeError(f"Could not connect to the API: {api_url}") from error
+        raise RuntimeError(f"Could not connect to the API: {display_url}") from error
     except requests.RequestException as error:
-        raise RuntimeError(f"API request failed: {error}") from error
+        raise RuntimeError(f"API request failed for {display_url}.") from error
 
     try:
         response.raise_for_status()

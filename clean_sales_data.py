@@ -1,5 +1,6 @@
-"""Clean and validate the sample sales data without changing the raw workbook."""
+"""Clean and validate sales data without changing the input workbook."""
 
+import argparse
 from pathlib import Path
 import math
 import re
@@ -7,8 +8,9 @@ import re
 import pandas as pd
 
 
-INPUT_FILE = Path("data/raw/sample_sales.xlsx")
-OUTPUT_DIRECTORY = Path("data/processed")
+PROJECT_DIRECTORY = Path(__file__).resolve().parent
+INPUT_FILE = PROJECT_DIRECTORY / "data/raw/sample_sales.xlsx"
+OUTPUT_DIRECTORY = PROJECT_DIRECTORY / "data/processed"
 CLEAN_FILE = OUTPUT_DIRECTORY / "clean_sales.xlsx"
 REJECTED_FILE = OUTPUT_DIRECTORY / "rejected_sales.xlsx"
 REQUIRED_COLUMNS = [
@@ -109,18 +111,31 @@ def clean_sales_data(sales_data: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFra
 
 
 def main() -> None:
-    if not INPUT_FILE.exists():
+    parser = argparse.ArgumentParser(description="Clean and validate sales data.")
+    parser.add_argument(
+        "--input",
+        type=Path,
+        default=INPUT_FILE,
+        help="Input Excel workbook (default: data/raw/sample_sales.xlsx)",
+    )
+    arguments = parser.parse_args()
+    input_file = arguments.input.expanduser()
+    if not input_file.is_absolute():
+        input_file = input_file.resolve()
+
+    if not input_file.exists():
         raise FileNotFoundError(
-            f"Could not find {INPUT_FILE}. Run generate_sample_data.py first."
+            f"Could not find {input_file}. Check the selected source or input path."
         )
 
-    sales_data = pd.read_excel(INPUT_FILE, engine="openpyxl")
+    sales_data = pd.read_excel(input_file, engine="openpyxl")
     clean_data, rejected_data, duplicate_count = clean_sales_data(sales_data)
 
     OUTPUT_DIRECTORY.mkdir(parents=True, exist_ok=True)
     clean_data.to_excel(CLEAN_FILE, index=False, engine="openpyxl")
     rejected_data.to_excel(REJECTED_FILE, index=False, engine="openpyxl")
 
+    print(f"Input workbook: {input_file}")
     print(f"Input rows: {len(sales_data)}")
     print(f"Duplicates removed: {duplicate_count}")
     print(f"Valid rows: {len(clean_data)}")

@@ -111,10 +111,31 @@ Refresh the cleaned data and database together:
 python refresh_data.py
 ```
 
-The refresh command cleans the existing `data/raw/sample_sales.xlsx` file and
-then replaces the sales snapshot in SQLite. It does not generate sample data.
-The Streamlit dashboard still reads `data/processed/clean_sales.xlsx`, so reload
-the dashboard page after a successful refresh to see the updated data.
+With no options, the refresh command keeps its original behavior: it cleans
+`data/raw/sample_sales.xlsx` and replaces the sales snapshot in SQLite. To select
+a different Excel workbook explicitly, use:
+
+```powershell
+python refresh_data.py --source excel --input "C:\path\to\sales.xlsx"
+```
+
+To refresh from an API, start the local demo in one terminal:
+
+```powershell
+python demo_api_sales.py
+```
+
+Then run this command in another terminal:
+
+```powershell
+python refresh_data.py --source api --url http://127.0.0.1:8000/sales
+```
+
+API mode fetches raw records into `data/raw/api_sales.xlsx`, then uses the same
+cleaner and database loader as Excel mode. Every successful refresh replaces the
+current cleaned files and SQLite sales snapshot; Excel and API sources are not
+combined. The Streamlit dashboard still reads `data/processed/clean_sales.xlsx`,
+so reload the dashboard page after a successful refresh to see updated data.
 
 ## Schedule a daily refresh on Windows
 
@@ -190,5 +211,5 @@ The fetch command validates the JSON structure and writes
 step. A failed request leaves the previous API workbook unchanged. Press `Ctrl+C`
 in the first terminal to stop the demo API.
 
-API ingestion is not connected to `refresh_data.py` or the scheduled task yet.
-Those commands continue to clean `data/raw/sample_sales.xlsx`.
+The scheduled task runs `python refresh_data.py` without source options, so it
+continues to use `data/raw/sample_sales.xlsx` rather than the demo API.
