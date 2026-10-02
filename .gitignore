@@ -8,6 +8,7 @@ __pycache__/
 
 # Generated data files
 data/raw/*.xlsx
+data/processed/*.xlsx
 
 # Secrets and local environment settings
 .env

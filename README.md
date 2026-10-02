@@ -1,7 +1,8 @@
 # FlowBridge
 
-FlowBridge is a beginner-friendly data project. This first step generates a small,
-intentionally messy Excel sales dataset and inspects it without changing the file.
+FlowBridge is a beginner-friendly data project. It generates a small,
+intentionally messy Excel sales dataset, inspects it, and creates separate clean
+and rejected datasets without changing the raw file.
 
 ## Intentional data problems
 
@@ -16,6 +17,25 @@ cleaning exercises:
 
 The inspection script only reads the workbook. It does not edit or overwrite the
 original Excel data.
+
+## Cleaning rules
+
+The cleaning script removes exact duplicate rows first. It then trims extra or
+repeated spaces and converts `product`, `category`, and `region` names to title
+case.
+
+A row is accepted only when:
+
+- `order_id` uses the format `ORD-####`, such as `ORD-0001`.
+- `order_date` contains a valid date.
+- `product`, `category`, and `region` are not missing or blank.
+- `quantity` is a positive whole number.
+- `unit_price` is a positive number.
+
+Valid rows receive a `total_sales` column calculated as `quantity × unit_price`
+and are saved to `data/processed/clean_sales.xlsx`. Invalid rows are saved to
+`data/processed/rejected_sales.xlsx`. Its `rejection_reason` column lists every
+problem found in that row. Missing values are not guessed or filled in.
 
 ## Install on Windows
 
@@ -62,3 +82,13 @@ py inspect_sales_data.py
 
 The inspection prints the row count, column names, first five rows,
 missing-value counts, and exact duplicate-row count.
+
+Clean and validate the workbook:
+
+```powershell
+py clean_sales_data.py
+```
+
+Run the generator before the cleaner whenever you want to recreate the original
+sample. The cleaner can be run repeatedly and will replace only the generated
+files in `data/processed`; it never changes `data/raw/sample_sales.xlsx`.
